@@ -1,6 +1,9 @@
 import streamlit as st
 import pickle
+import pandas as pd
 import numpy as np
+import os
+import csv
 
 with open('model_folder/xgboost_ckd_model.pkl', 'rb') as file:
     model_ckd = pickle.load(file)
@@ -24,8 +27,21 @@ def predict_no_alglca(features):
     prediction = model_3.predict([features])
     return prediction[0]
 
-#     prediction = model_other.predict([features])
-#     return prediction[0]
+
+
+
+def log_data_to_csv(model_name, input_data, prediction):
+        file_name = f"{model_name}_predictions.csv"
+        input_values = list(input_data.values())
+        df = pd.DataFrame([input_values + [prediction]], columns=list(input_data.keys()) + ['Prediction'])
+        if not os.path.isfile(file_name):
+            df.to_csv(file_name, index=False)
+        else:
+            df.to_csv(file_name, mode='a', header=False, index=False)
+
+
+
+
 
 st.title("CKD Predictor")
 model_choice = st.selectbox("Select the feaures you have", ("All Attributes", "No Creatinine",'No Albumin, Glucose, Chloride'))
@@ -56,8 +72,20 @@ if model_choice == "All Attributes":
     if st.button("Predict CKD"):
         features = [cr,age, weight,al,gender,na,gl,ca,cl,k]
         result = predict_all(features)
-        st.success(f"Prediction: {'CKD Positive' if result == 1 else 'CKD Negative'}")
+        # st.success(f"Prediction: {'CKD Positive' if result == 1 else 'CKD Negative'}")
+        if result == 1:
+            st.success("Prediction: CKD Positive")
+            st.image("negative.png", width=50)  # Show negative icon for CKD positive
+        else:
+            st.success("Prediction: CKD Negative")
+            st.image("positive.png", width=50)  # Show positive icon for CKD negative
+
         # st.success(result)
+
+
+        input_data = {'Serum Creatinine': cr, 'Age': age, 'Weight': weight, 'Albumin': al, 'Gender': gender,
+                      'Sodium': na, 'Glucose': gl, 'Calcium': ca, 'Chloride': cl, 'Potassium': k}
+        log_data_to_csv("all_attributes", input_data, result)
         
 elif model_choice == "No Creatinine":
     st.header("Attributes")
@@ -83,7 +111,18 @@ elif model_choice == "No Creatinine":
     if st.button("Predict with Other Model"):
         features = [age, weight,al,gender,na,gl,ca,cl,k]  
         result = predict_no_scr(features)
-        st.success(f"Prediction: {'CKD Positive' if result == 1 else 'CKD Negative'}")
+        # st.success(f"Prediction: {'CKD Positive' if result == 1 else 'CKD Negative'}")
+        if result == 1:
+            st.success("Prediction: CKD Positive")
+            st.image("negative.png", width=50)  # Show negative icon for CKD positive
+        else:
+            st.success("Prediction: CKD Negative")
+            st.image("positive.png", width=50)  # Show positive icon for CKD negative
+
+
+        input_data = {'Age': age, 'Blood Pressure': weight, 'Albumin': al, 'Gender': gender,
+                      'Sodium': na, 'Glucose': gl, 'Calcium': ca, 'Chloride': cl, 'Potassium': k}
+        log_data_to_csv("no_creatinine", input_data, result)
 
 
 if model_choice == "No Albumin, Glucose, Chloride":
@@ -112,5 +151,16 @@ if model_choice == "No Albumin, Glucose, Chloride":
     if st.button("Predict CKD"):
         features = [cr,age, weight,gender,na,cl,k]
         result = predict_no_alglca(features)
-        st.success(f"Prediction: {'CKD Positive' if result == 1 else 'CKD Negative'}")
+        # st.success(f"Prediction: {'CKD Positive' if result == 1 else 'CKD Negative'}")
+        if result == 1:
+            st.success("Prediction: CKD Positive")
+            st.image("negative.png", width=50)  # Show negative icon for CKD positive
+        else:
+            st.success("Prediction: CKD Negative")
+            st.image("positive.png", width=50)  # Show positive icon for CKD negative
+
+
+        input_data = {'Serum Creatinine': cr, 'Age': age, 'Weight': weight, 'Gender': gender,
+                      'Sodium': na, 'Chloride': cl, 'Potassium': k}
+        log_data_to_csv("no_albumin_glucose_chloride", input_data, result)
 

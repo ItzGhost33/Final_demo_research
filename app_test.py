@@ -69,12 +69,12 @@ if model_choice == "All Attributes":
     cl = st.number_input("Chloride", min_value=0.0, max_value=1000.0, step=0.1)
     k = st.number_input("Pottasium", min_value=0.0, max_value=1000.0, step=0.1)
     
-    if st.button("Predict CKD"):
+    if st.button("Predict"):
         features = [cr,age, weight,al,gender,na,gl,ca,cl,k]
         result = predict_all(features)
         # st.success(f"Prediction: {'CKD Positive' if result == 1 else 'CKD Negative'}")
         if result == 1:
-            st.success("Prediction: CKD Positive")
+            st.warning("Prediction: CKD Positive")
             st.image("negative.png", width=50)  # Show negative icon for CKD positive
         else:
             st.success("Prediction: CKD Negative")
@@ -108,12 +108,12 @@ elif model_choice == "No Creatinine":
     cl = st.number_input("Chloride", min_value=0.0, max_value=10.0, step=0.1)
     k = st.number_input("Pottasium", min_value=0.0, max_value=10.0, step=0.1)
     
-    if st.button("Predict with Other Model"):
+    if st.button("Predict"):
         features = [age, weight,al,gender,na,gl,ca,cl,k]  
         result = predict_no_scr(features)
         # st.success(f"Prediction: {'CKD Positive' if result == 1 else 'CKD Negative'}")
         if result == 1:
-            st.success("Prediction: CKD Positive")
+            st.warning("Prediction: CKD Positive")
             st.image("negative.png", width=50)  # Show negative icon for CKD positive
         else:
             st.success("Prediction: CKD Negative")
@@ -148,12 +148,12 @@ if model_choice == "No Albumin, Glucose, Chloride":
     cl = st.number_input("Chloride", min_value=0.0, max_value=1000.0, step=0.1)
     k = st.number_input("Pottasium", min_value=0.0, max_value=1000.0, step=0.1)
     
-    if st.button("Predict CKD"):
+    if st.button("Predict"):
         features = [cr,age, weight,gender,na,cl,k]
         result = predict_no_alglca(features)
         # st.success(f"Prediction: {'CKD Positive' if result == 1 else 'CKD Negative'}")
         if result == 1:
-            st.success("Prediction: CKD Positive")
+            st.warning("Prediction: CKD Positive")
             st.image("negative.png", width=50)  # Show negative icon for CKD positive
         else:
             st.success("Prediction: CKD Negative")
